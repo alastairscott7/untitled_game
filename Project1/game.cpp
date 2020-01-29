@@ -60,18 +60,20 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	map = new Map();
 	//ECS implementation
 
-	Map::LoadMap("assets/16x16map.map", 16, 16);
+	Map::LoadMap("assets/16x16map.map", 8, 8);
 
-	player.addComponent<TransformComponent>(2);
+	player.addComponent<TransformComponent>(224, 224, 2);
 	player.addComponent<SpriteComponent>("assets/poseidon_sheet_noshade.png", true);
 	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
+	/*
 	wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
 	wall.addComponent<SpriteComponent>("assets/wall_basic.png");
 	wall.addComponent<ColliderComponent>("wall");
 	wall.addGroup(groupMap);
+	*/
 }
 
 void Game::handleEvents()
