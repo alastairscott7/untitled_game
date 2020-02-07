@@ -11,18 +11,10 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
-std::vector<ColliderComponent*> Game::colliders; //maybe re-watch the static variables video to see why we need these
+//std::vector<ColliderComponent*> Game::colliders; //re-watch the static variables video to see why we need these
+//bool Game::isRunning = false;
 
 auto& player = manager.addEntity(); //addEntity returns an Entity reference
-auto& wall = manager.addEntity();
-
-enum groupLabels : std::size_t
-{
-	groupMap,
-	groupPlayers,
-	groupEnemies,
-	groupColliders
-};
 
 Game::Game()
 {}
@@ -60,21 +52,27 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	map = new Map();
 	//ECS implementation
 
-	Map::LoadMap("assets/16x16map.map", 8, 8);
+	map->LoadMap("assets/16x16map.map", 8, 8);
 
 	player.addComponent<TransformComponent>(224, 224, 2);
-	player.addComponent<SpriteComponent>("assets/poseidon_sheet_noshade.png", true);
+	player.addComponent<SpriteComponent>("assets/hoodie.png", true);
 	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
 	/*
+	Example way to add a wall with collision:
 	wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
 	wall.addComponent<SpriteComponent>("assets/wall_basic.png");
 	wall.addComponent<ColliderComponent>("wall");
 	wall.addGroup(groupMap);
 	*/
 }
+
+//rendering groups in order by creating the lists to go through when rendering
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& colliders(manager.getGroup(Game::groupColliders));
 
 void Game::handleEvents()
 {
@@ -91,37 +89,37 @@ void Game::handleEvents()
 
 void Game::update()
 {
+	SDL_Rect playercol = player.getComponent<ColliderComponent>().collider;
+	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+
 	manager.refresh();
 	manager.update();
 
-	for (auto cc : colliders) {
-		Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
+	for (auto c : colliders) {
+		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+		if (Collision::AABB(cCol, playercol)) {
+			player.getComponent<TransformComponent>().position = playerPos;
+		}
 	}
-
-
 }
-
-//rendering groups in order by creating the lists to go through when rendering
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	// this used to draw objects in order they were created: manager.draw();
+	//this used to draw objects in order they were created: manager.draw();
+
 	//go through groups and render one after the other:
 	for (auto& t : tiles)
 	{
 		t->draw();
 	}
+	for (auto& c : colliders)
+	{
+		c->draw();
+	}
 	for (auto& p : players)
 	{
 		p->draw();
-	}
-	for (auto& e : enemies)
-	{
-		e->draw();
 	}
 	SDL_RenderPresent(renderer);
 }
@@ -130,13 +128,6 @@ void Game::clean()
 {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
-	SDL_Quit;
+	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
-}
-
-void Game::AddTile(int id, int x, int y)
-{
-	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(x, y, 64, 64, id);
-	tile.addGroup(groupMap);
 }
