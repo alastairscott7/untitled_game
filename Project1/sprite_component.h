@@ -58,12 +58,12 @@ public:
 
 	void update() override
 	{
-		//Adjust srcRect.x to scroll through animations from left to right
+		/* Adjust srcRect.x to scroll through animations from left to right */
 		if (animated)
 		{
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
 		}
-		//Adjust srcRect.y depending anim_index to change animation cycle
+		/* Adjust srcRect.y depending anim_index to change animation cycle */
 		srcRect.y = anim_index * transform->height;
 
 		if (!facing_left) {

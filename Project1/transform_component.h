@@ -3,7 +3,7 @@
 #include "components.h"
 #include "vector_2d.h"
 
-//This component holds position, rotation and scale
+/* This component holds position, rotation and scale */
 class TransformComponent : public Component
 {
 public:

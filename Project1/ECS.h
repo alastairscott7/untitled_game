@@ -36,7 +36,8 @@ using ComponentArray = std::array<Component*, maxComponents>;
 class Component
 {
 public:
-	Entity* entity; //reference to owner
+	/* reference to owner */
+	Entity* entity;
 
 	virtual void init() {}
 	virtual void update() {}
@@ -70,7 +71,8 @@ public:
 	void addGroup(Group mGroup);
 	void delGroup(Group mGroup)
 	{
-		groupBitSet[mGroup] = false; //manager will check if bit is false and remove if so
+		/* manager will check if bit is false and remove if so */
+		groupBitSet[mGroup] = false;
 	}
 
 	template <typename T>
@@ -80,11 +82,11 @@ public:
 	}
 
 	template <typename T, typename... TArgs>
-	T& addComponent(TArgs&& ... mArgs) //return address for variable type T
+	T& addComponent(TArgs&& ... mArgs) /* return address for variable type T */
 	{
-		T* c(new T(std::forward<TArgs>(mArgs)...)); //... means take whats on the left and for each template parameter, unpack accordingly
+		T* c(new T(std::forward<TArgs>(mArgs)...)); /*... means take whats on the left and for each template parameter, unpack accordingly */
 		c->entity = this;
-		std::unique_ptr<Component> uPtr{ c }; //initializer list {} assigning uPtr c
+		std::unique_ptr<Component> uPtr{ c }; /* initializer list {} assigning uPtr c */
 		components.emplace_back(std::move(uPtr));
 
 		componentArray[getComponentTypeID<T>()] = c;

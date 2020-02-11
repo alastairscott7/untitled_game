@@ -8,13 +8,11 @@
 Map* map;
 Manager manager;
 
+/* Need to define static variables to use them */
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
-//std::vector<ColliderComponent*> Game::colliders; //re-watch the static variables video to see why we need these
-//bool Game::isRunning = false;
-
-auto& player = manager.addEntity(); //addEntity returns an Entity reference
+auto& player = manager.addEntity(); /* addEntity returns an Entity reference */
 
 Game::Game()
 {}
@@ -50,8 +48,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	map = new Map();
-	//ECS implementation
-
 	map->LoadMap("assets/16x16map.map", 8, 8);
 
 	player.addComponent<TransformComponent>(224, 224, 2);
@@ -59,17 +55,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
-
-	/*
-	Example way to add a wall with collision:
-	wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
-	wall.addComponent<SpriteComponent>("assets/wall_basic.png");
-	wall.addComponent<ColliderComponent>("wall");
-	wall.addGroup(groupMap);
-	*/
 }
 
-//rendering groups in order by creating the lists to go through when rendering
+/* Creating the lists to go through when rendering */
 auto& tiles(manager.getGroup(Game::groupMap));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
@@ -101,14 +89,16 @@ void Game::update()
 			player.getComponent<TransformComponent>().position = playerPos;
 		}
 	}
+
+	playerPos = player.getComponent<TransformComponent>().position;
+	map->CheckBounds(playerPos);
 }
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	//this used to draw objects in order they were created: manager.draw();
 
-	//go through groups and render one after the other:
+	/* Render groups in order */
 	for (auto& t : tiles)
 	{
 		t->draw();
