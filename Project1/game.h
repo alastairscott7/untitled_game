@@ -20,6 +20,7 @@ public:
 	void render();
 	void clean();
 
+	static SDL_Rect camera;
 	static SDL_Renderer *renderer;
 	static SDL_Event event;
 	enum groupLabels : std::size_t

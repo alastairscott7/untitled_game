@@ -12,6 +12,8 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
+SDL_Rect Game::camera = { 0, 0, 512, 512 };
+
 auto& player = manager.addEntity(); /* addEntity returns an Entity reference */
 
 Game::Game()
@@ -48,9 +50,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	map = new Map();
-	map->LoadMap("assets/16x16map.map", 8, 8);
+	map->LoadMap("assets/16x16map.map", 24, 8);
 
-	player.addComponent<TransformComponent>(224, 224, 2);
+	player.addComponent<TransformComponent>(768, 224, 2);
 	player.addComponent<SpriteComponent>("assets/hoodie.png", true);
 	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player");
@@ -80,6 +82,11 @@ void Game::update()
 	SDL_Rect playercol = player.getComponent<ColliderComponent>().collider;
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 
+	int playerTilex;
+	int playerTiley;
+	playerTilex = playerPos.x / 512;
+	playerTiley = playerPos.y / 512;
+
 	manager.refresh();
 	manager.update();
 
@@ -90,8 +97,40 @@ void Game::update()
 		}
 	}
 
-	playerPos = player.getComponent<TransformComponent>().position;
-	map->CheckBounds(playerPos);
+	camera.x = player.getComponent<TransformComponent>().position.x - 224;
+	camera.y = player.getComponent<TransformComponent>().position.y - 224;
+	if (camera.x < 0) {
+		camera.x = 0;
+	}
+	if (camera.y < 0) {
+		camera.y = 0;
+	}
+	if (camera.x > camera.w) {
+		camera.x = camera.w;
+	}
+	if (camera.y > camera.h) {
+		camera.y = camera.h;
+	}
+
+	Vector2D playerNewPos = player.getComponent<TransformComponent>().position;
+
+	int playerNewx;
+	int playerNewy;
+	playerNewx = playerNewPos.x / 512;
+	playerNewy = playerNewPos.y / 512;
+	
+	if (playerNewx > playerTilex) {
+		for (auto t : tiles) {
+			TileComponent tile_comp = t->getComponent<TileComponent>();
+
+			tile_comp.transform->position.x -= Game::camera.w;
+		}
+		for (auto c : colliders) {
+			c->getComponent<ColliderComponent>().collider.x -= Game::camera.w;
+		}
+		player.getComponent<TransformComponent>().position.x -= 512;
+	}
+
 }
 
 void Game::render()

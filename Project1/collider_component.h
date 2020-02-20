@@ -55,6 +55,8 @@ public:
 			collider.w = transform->width * transform->scale;
 			collider.h = transform->height * transform->scale;
 		}
+			dstR.x = collider.x;
+			dstR.y = collider.y;
 	}
 
 	void draw() override

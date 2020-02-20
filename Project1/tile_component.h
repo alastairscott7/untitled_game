@@ -14,10 +14,15 @@ public:
 	int tile_id;
 	const char* path;
 
+	Vector2D real_pos;
+
 	TileComponent() = default;
 
 	TileComponent(int x, int y, int w, int h, int id)
 	{
+		real_pos.x = x;
+		real_pos.y = y;
+
 		tile_rect.x = x;
 		tile_rect.y = y;
 		tile_rect.w = w;
@@ -39,7 +44,13 @@ public:
 			break;
 		}
 	}
-
+/*
+	void update() override
+	{
+		transform->position.x = real_pos.x - Game::camera.x;
+		transform->position.y = real_pos.y - Game::camera.y;
+	}
+	*/
 	void init() override
 	{
 		entity->addComponent<TransformComponent>((float)tile_rect.x, (float)tile_rect.y, tile_rect.w, tile_rect.h, 1);

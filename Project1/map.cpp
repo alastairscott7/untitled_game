@@ -44,22 +44,6 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 	map_file.close();
 }
 
-void Map::CheckBounds(Vector2D player_pos)
-{
-	if (player_pos.x + 64 > 64) {
-
-	}
-	else if (player_pos.x < 0) {
-
-	}
-	else if (player_pos.y + 64 > 64) {
-
-	}
-	else if (player_pos.y < 0) {
-
-	}
-}
-
 void Map::AddTile(int id, int x, int y)
 {
 	auto& tile(manager.addEntity());
