@@ -50,7 +50,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	map = new Map();
-	map->LoadMap("assets/16x16map.map", 24, 8);
+	map->LoadMap("assets/16x16map.map", 24, 16);
 
 	player.addComponent<TransformComponent>(768, 224, 2);
 	player.addComponent<SpriteComponent>("assets/hoodie.png", true);
@@ -86,6 +86,7 @@ void Game::update()
 	int playerTiley;
 	playerTilex = playerPos.x / 512;
 	playerTiley = playerPos.y / 512;
+	camera.x = 0;
 
 	manager.refresh();
 	manager.update();
@@ -97,38 +98,88 @@ void Game::update()
 		}
 	}
 
-	camera.x = player.getComponent<TransformComponent>().position.x - 224;
-	camera.y = player.getComponent<TransformComponent>().position.y - 224;
-	if (camera.x < 0) {
-		camera.x = 0;
-	}
-	if (camera.y < 0) {
-		camera.y = 0;
-	}
-	if (camera.x > camera.w) {
-		camera.x = camera.w;
-	}
-	if (camera.y > camera.h) {
-		camera.y = camera.h;
-	}
-
 	Vector2D playerNewPos = player.getComponent<TransformComponent>().position;
 
 	int playerNewx;
 	int playerNewy;
 	playerNewx = playerNewPos.x / 512;
 	playerNewy = playerNewPos.y / 512;
-	
-	if (playerNewx > playerTilex) {
+
+	std::cout << playerNewPos.x << std::endl;
+	std::cout << playerNewPos.y << std::endl;
+
+	if ((playerNewx * 512) > camera.x) {
+		camera.x = playerNewx * 512;
+
+		/*
+		if (camera.x < 0) {
+			camera.x = 0;
+		}
+		if (camera.y < 0) {
+			camera.y = 0;
+		}
+		*/
+		if (camera.x > camera.w) {
+			camera.x = camera.w;
+		}
+		/*
+		if (camera.y > camera.h) {
+			camera.y = camera.h;
+		}
+		*/
+
 		for (auto t : tiles) {
 			TileComponent tile_comp = t->getComponent<TileComponent>();
-
-			tile_comp.transform->position.x -= Game::camera.w;
+			tile_comp.transform->position.x -= Game::camera.x;
 		}
 		for (auto c : colliders) {
-			c->getComponent<ColliderComponent>().collider.x -= Game::camera.w;
+			c->getComponent<ColliderComponent>().collider.x -= Game::camera.x;
 		}
 		player.getComponent<TransformComponent>().position.x -= 512;
+	}
+	else if (playerNewPos.x < camera.x) {
+		camera.x = -512;
+
+		if (camera.x > camera.w) {
+			camera.x = camera.w;
+		}
+		/*
+		if (camera.y > camera.h) {
+			camera.y = camera.h;
+		}
+		*/
+		for (auto t : tiles) {
+			TileComponent tile_comp = t->getComponent<TileComponent>();
+			tile_comp.transform->position.x -= Game::camera.x;
+		}
+		for (auto c : colliders) {
+			c->getComponent<ColliderComponent>().collider.x -= Game::camera.x;
+		}
+		player.getComponent<TransformComponent>().position.x += 512;
+	}
+	else if ((playerNewy * 512) > camera.y) {
+		camera.y = playerNewy * 512;
+
+		for (auto t : tiles) {
+			TileComponent tile_comp = t->getComponent<TileComponent>();
+			tile_comp.transform->position.y -= Game::camera.y;
+		}
+		for (auto c : colliders) {
+			c->getComponent<ColliderComponent>().collider.y -= Game::camera.y;
+		}
+		player.getComponent<TransformComponent>().position.y -= 512;
+	}
+	else if (playerNewPos.y < camera.y) {
+		camera.y = -512;
+
+		for (auto t : tiles) {
+			TileComponent tile_comp = t->getComponent<TileComponent>();
+			tile_comp.transform->position.y -= Game::camera.y;
+		}
+		for (auto c : colliders) {
+			c->getComponent<ColliderComponent>().collider.y -= Game::camera.y;
+		}
+		player.getComponent<TransformComponent>().position.y += 512;
 	}
 
 }
