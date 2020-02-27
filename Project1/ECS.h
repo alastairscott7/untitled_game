@@ -15,8 +15,8 @@ using Group = std::size_t;
 
 inline ComponentID getNewComponentTypeID()
 {
-	static ComponentID lastID = 0u;
-	return lastID++;
+	static ComponentID last_id = 0u;
+	return last_id++;
 }
 
 template <typename T>
@@ -26,12 +26,12 @@ inline ComponentID getComponentTypeID() noexcept
 	return typeID;
 }
 
-constexpr std::size_t maxComponents = 32;
-constexpr std::size_t maxGroups = 32;
+constexpr std::size_t max_components = 32;
+constexpr std::size_t max_groups = 32;
 
-using ComponentBitSet = std::bitset<maxComponents>;
-using GroupBitSet = std::bitset<maxGroups>;
-using ComponentArray = std::array<Component*, maxComponents>;
+using ComponentBitSet = std::bitset<max_components>;
+using GroupBitSet = std::bitset<max_groups>;
+using ComponentArray = std::array<Component*, max_components>;
 
 class Component
 {
@@ -127,7 +127,7 @@ public:
 
 	void refresh()
 	{
-		for (auto i(0u); i < maxGroups; i++) {
+		for (auto i(0u); i < max_groups; i++) {
 			auto& v(groupedEntites[i]);
 			v.erase(std::remove_if(std::begin(v), std::end(v),
 					[i](Entity* mEntity)
@@ -165,5 +165,5 @@ public:
 
 private:
 	std::vector<std::unique_ptr<Entity>> entities;
-	std::array<std::vector<Entity*>, maxGroups> groupedEntites;
+	std::array<std::vector<Entity*>, max_groups> groupedEntites;
 };

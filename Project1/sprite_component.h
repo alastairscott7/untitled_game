@@ -44,27 +44,27 @@ public:
 
 	void setTex(const char* path)
 	{
-		texture = TextureManager::loadTexture(path);
+		texture = TextureManager::load_texture(path);
 	}
 
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
 
-		srcRect.x = srcRect.y = 0;
-		srcRect.w = transform->width;
-		srcRect.h = transform->height;
+		src_rect.x = src_rect.y = 0;
+		src_rect.w = transform->width;
+		src_rect.h = transform->height;
 	}
 
 	void update() override
 	{
-		/* Adjust srcRect.x to scroll through animations from left to right */
+		/* Adjust src_rect.x to scroll through animations from left to right */
 		if (animated)
 		{
-			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
+			src_rect.x = src_rect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
 		}
-		/* Adjust srcRect.y depending anim_index to change animation cycle */
-		srcRect.y = anim_index * transform->height;
+		/* Adjust src_rect.y depending anim_index to change animation cycle */
+		src_rect.y = anim_index * transform->height;
 
 		if (!facing_left) {
 			sprite_flip = SDL_FLIP_HORIZONTAL;
@@ -73,15 +73,15 @@ public:
 			sprite_flip = SDL_FLIP_NONE;
 		}
 
-		dstRect.x = static_cast<int>(transform->position.x);
-		dstRect.y = static_cast<int>(transform->position.y);
-		dstRect.w = transform->width * transform->scale;
-		dstRect.h = transform->height * transform->scale;
+		dst_rect.x = static_cast<int>(transform->position.x) - Game::camera.x;
+		dst_rect.y = static_cast<int>(transform->position.y) - Game::camera.y;
+		dst_rect.w = transform->width * transform->scale;
+		dst_rect.h = transform->height * transform->scale;
 	}
 
 	void draw() override
 	{
-		TextureManager::Draw(texture, srcRect, dstRect, sprite_flip);
+		TextureManager::draw(texture, src_rect, dst_rect, sprite_flip);
 	}
 
 	void Play(const char* animName)
@@ -94,7 +94,7 @@ public:
 private:
 	TransformComponent* transform;
 	SDL_Texture* texture;
-	SDL_Rect srcRect, dstRect;
+	SDL_Rect src_rect, dst_rect;
 
 	bool animated = false;
 	int frames = 0;

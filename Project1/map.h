@@ -10,9 +10,9 @@ public:
 	Map();
 	~Map();
 
-	void LoadMap(std::string path, int sizeX, int sizeY);
-	void AddTile(int id, int x, int y);
-	void AddTileCol(std::string tag, int x, int y);
+	void load_map(std::string path, int size_x, int size_y);
+	void add_tile(int id, int x, int y);
+	void add_tile_col(std::string tag, int x, int y);
 
 private:
 

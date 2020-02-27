@@ -6,6 +6,6 @@ class ColliderComponent; //use this instead of an include
 class Collision
 {
 public:
-	static bool AABB(const SDL_Rect& recA, const SDL_Rect& recB);
-	static bool AABB(const ColliderComponent& colA, const ColliderComponent& colB);
+	static bool AABB(const SDL_Rect& rect_A, const SDL_Rect& rect_B);
+	static bool AABB(const ColliderComponent& col_A, const ColliderComponent& col_B);
 };

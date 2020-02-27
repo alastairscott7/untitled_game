@@ -37,7 +37,7 @@ public:
 		}
 		transform = &entity->getComponent<TransformComponent>();
 
-		tex = TextureManager::loadTexture("assets/coltex.png");
+		tex = TextureManager::load_texture("assets/coltex.png");
 		srcR = { 0, 0, 32, 32 };
 		dstR = { collider.x, collider.y, collider.w, collider.h };
 
@@ -55,12 +55,12 @@ public:
 			collider.w = transform->width * transform->scale;
 			collider.h = transform->height * transform->scale;
 		}
-			dstR.x = collider.x;
-			dstR.y = collider.y;
+			dstR.x = collider.x - Game::camera.x;
+			dstR.y = collider.y - Game::camera.y;
 	}
 
 	void draw() override
 	{
-		TextureManager::Draw(tex, srcR, dstR, SDL_FLIP_NONE);
+		TextureManager::draw(tex, srcR, dstR, SDL_FLIP_NONE);
 	}
 };

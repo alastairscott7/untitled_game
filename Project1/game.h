@@ -2,6 +2,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "vector_2d.h"
 #include <iostream>
 #include <vector>
 
@@ -14,11 +15,12 @@ public:
 	~Game();
 
 	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
-	void handleEvents();
+	void handle_events();
 	void update();
-	bool running() { return isRunning; }
+	bool running() { return is_running; }
 	void render();
 	void clean();
+	void move_camera(Vector2D player_pos_new);
 
 	static SDL_Rect camera;
 	static SDL_Renderer *renderer;
@@ -31,6 +33,6 @@ public:
 	};
 
 private:
-	bool isRunning; /* public or private? */
+	bool is_running; /* public or private? */
 	SDL_Window* window;
 };

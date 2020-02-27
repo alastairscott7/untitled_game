@@ -7,10 +7,9 @@
 class TileComponent : public Component
 {
 public:
-	TransformComponent* transform;
-	SpriteComponent* sprite;
+	SDL_Texture* texture;
 
-	SDL_Rect tile_rect;
+	SDL_Rect src_rect, dst_rect;
 	int tile_id;
 	const char* path;
 
@@ -18,15 +17,22 @@ public:
 
 	TileComponent() = default;
 
+	~TileComponent()
+	{
+		SDL_DestroyTexture(texture);
+	}
+
 	TileComponent(int x, int y, int w, int h, int id)
 	{
 		real_pos.x = x;
 		real_pos.y = y;
 
-		tile_rect.x = x;
-		tile_rect.y = y;
-		tile_rect.w = w;
-		tile_rect.h = h;
+		src_rect = { 0, 0, 32, 32 };
+
+		dst_rect.x = x;
+		dst_rect.y = y;
+		dst_rect.w = w;
+		dst_rect.h = h;
 		tile_id = id;
 
 		switch (tile_id)
@@ -43,20 +49,18 @@ public:
 		default:
 			break;
 		}
+
+		texture = TextureManager::load_texture(path);
 	}
-/*
+    
 	void update() override
 	{
-		transform->position.x = real_pos.x - Game::camera.x;
-		transform->position.y = real_pos.y - Game::camera.y;
+		dst_rect.x = real_pos.x - Game::camera.x;
+		dst_rect.y = real_pos.y - Game::camera.y;
 	}
-	*/
-	void init() override
+	
+	void draw() override
 	{
-		entity->addComponent<TransformComponent>((float)tile_rect.x, (float)tile_rect.y, tile_rect.w, tile_rect.h, 1);
-		transform = &entity->getComponent<TransformComponent>();
-
-		entity->addComponent<SpriteComponent>(path);
-		sprite = &entity->getComponent<SpriteComponent>();
+		TextureManager::draw(texture, src_rect, dst_rect, SDL_FLIP_NONE);
 	}
 };
