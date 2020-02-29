@@ -28,10 +28,10 @@ public:
 		animated = isAnimated;
 
 		Animation idle = Animation(0, 2, 200);
-		//Animation walk = Animation(1, 8, 100);
+		Animation walk = Animation(1, 2, 200);
 
 		animations_map.emplace("Idle", idle);
-		//animations.emplace("Walk", walk);
+		animations_map.emplace("Walk", walk);
 
 		Play("Idle");
 		setTex(path);
