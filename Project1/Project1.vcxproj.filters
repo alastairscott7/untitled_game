@@ -16,6 +16,9 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{295a16a2-2368-472e-81ae-2860d4458d3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{59d0652b-5046-480d-ae6e-a215181746eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="ECS.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="asset_manager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,5 +86,52 @@
     <ClInclude Include="animation.h">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="asset_manager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile_component.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_label.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\coltex.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\forest_basic.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\hoodie.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\poseidon_sheet_noshade.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\poseidon_sheet_shade.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\proj.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\tree_mid.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\tree_top.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\wall.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\wall_basic.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\water.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\water_basic.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
 </Project>

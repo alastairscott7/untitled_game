@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "texture_manager.h"
 #include "animation.h"
+#include "asset_manager.h"
 #include <map>
 
 class SpriteComponent : public Component
@@ -18,12 +19,12 @@ public:
 	bool facing_left = true;
 
 	SpriteComponent() = default;
-	SpriteComponent(const char* path)
+	SpriteComponent(std::string id)
 	{
-		setTex(path);
+		setTex(id);
 	}
 
-	SpriteComponent(const char* path, bool isAnimated)
+	SpriteComponent(std::string id, bool isAnimated)
 	{
 		animated = isAnimated;
 
@@ -34,17 +35,16 @@ public:
 		animations_map.emplace("Walk", walk);
 
 		Play("Idle");
-		setTex(path);
+		setTex(id);
 	}
 
 	~SpriteComponent()
 	{
-		SDL_DestroyTexture(texture);
 	}
 
-	void setTex(const char* path)
+	void setTex(std::string id)
 	{
-		texture = TextureManager::load_texture(path);
+		texture = Game::assets->get_texture(id);
 	}
 
 	void init() override

@@ -5,3 +5,5 @@
 #include "keyboard_control.h"
 #include "collider_component.h"
 #include "tile_component.h"
+#include "projectile_component.h"
+#include "ui_label.h"

@@ -76,12 +76,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\alast\Documents\Programming\SDL2_image\include;C:\Users\alast\Documents\Programming\SDL2\SDL2-devel-2.0.10-VC\SDL2-2.0.10\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\alast\Documents\Programming\SDL2_ttf-2.0.15\include;C:\Users\alast\Documents\Programming\SDL2_image\include;C:\Users\alast\Documents\Programming\SDL2\SDL2-devel-2.0.10-VC\SDL2-2.0.10\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\alast\Documents\Programming\SDL2_image\lib\x86;C:\Users\alast\Documents\Programming\SDL2\SDL2-devel-2.0.10-VC\SDL2-2.0.10\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\alast\Documents\Programming\SDL2_ttf-2.0.15\lib\x86;C:\Users\alast\Documents\Programming\SDL2_image\lib\x86;C:\Users\alast\Documents\Programming\SDL2\SDL2-devel-2.0.10-VC\SDL2-2.0.10\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="asset_manager.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="game.cpp" />
@@ -139,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
+    <ClInclude Include="asset_manager.h" />
     <ClInclude Include="collider_component.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="components.h" />
@@ -146,11 +148,27 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="keyboard_control.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="projectile_component.h" />
     <ClInclude Include="tile_component.h" />
     <ClInclude Include="transform_component.h" />
     <ClInclude Include="sprite_component.h" />
     <ClInclude Include="texture_manager.h" />
+    <ClInclude Include="ui_label.h" />
     <ClInclude Include="vector_2d.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\coltex.png" />
+    <Image Include="assets\forest_basic.png" />
+    <Image Include="assets\hoodie.png" />
+    <Image Include="assets\poseidon_sheet_noshade.png" />
+    <Image Include="assets\poseidon_sheet_shade.png" />
+    <Image Include="assets\proj.png" />
+    <Image Include="assets\tree_mid.png" />
+    <Image Include="assets\tree_top.png" />
+    <Image Include="assets\wall.png" />
+    <Image Include="assets\wall_basic.png" />
+    <Image Include="assets\water.png" />
+    <Image Include="assets\water_basic.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

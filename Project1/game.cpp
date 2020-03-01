@@ -3,6 +3,8 @@
 #include "map.h"
 #include "components.h"
 #include "collision.h"
+#include "asset_manager.h"
+#include <sstream>
 
 Map* map;
 Manager manager;
@@ -11,7 +13,10 @@ SDL_Rect Game::camera = { 0, 0, 512, 512 };
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
+AssetManager* Game::assets = new AssetManager(&manager);
+
 auto& player = manager.addEntity();
+auto& label = manager.addEntity();
 
 Game::Game()
 {}
@@ -45,21 +50,37 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	else {
 		is_running = false;
 	}
+	
+	if (TTF_Init() == -1)
+	{
+		std::cout << "Error: SDL_TTF" << std::endl;
+	}
+
+
+	assets->add_texture("player", "assets/hoodie.png");
+	assets->add_texture("projectile", "assets/proj.png");
+	assets->add_font("arial", "assets/arial.ttf", 16);
 
 	map = new Map();
 	map->load_map("assets/16x16map.map", 24, 16);
 
 	player.addComponent<TransformComponent>(768, 224, 2);
-	player.addComponent<SpriteComponent>("assets/hoodie.png", true);
+	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
+
+	SDL_Color white = { 255, 255, 255, 255 };
+	label.addComponent<UILabel>(10, 10, "Test String", "arial", white);
+
+	//assets->create_projectile(Vector2D(525, 100), Vector2D(2, 0), 500, 2, "projectile");
 }
 
 /* Creating the lists to go through when rendering */
 auto& tiles(manager.getGroup(Game::groupMap));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
+auto& projectiles(manager.getGroup(Game::groupProjectiles));
 
 void Game::handle_events()
 {
@@ -78,7 +99,12 @@ void Game::update()
 {
 	SDL_Rect player_col = player.getComponent<ColliderComponent>().collider;
 	Vector2D player_pos = player.getComponent<TransformComponent>().position;
-	Vector2D player_pos_new;
+	std::stringstream ss;
+
+	ss << "Player Position: " << player_pos;
+	label.getComponent<UILabel>().set_label_text(ss.str(), "arial");
+
+	move_camera(player_pos);
 
 	manager.refresh();
 	manager.update();
@@ -90,8 +116,15 @@ void Game::update()
 		}
 	}
 
-	player_pos_new = player.getComponent<TransformComponent>().position;
-	move_camera(player_pos_new);
+	for (auto& p : projectiles)
+	{
+		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider)) {
+			/* get type of projectile, do different kinds of damage, etc */
+			std::cout << "Projectile hit player" << std::endl;
+			p->destroy();
+		}
+	}
+
 }
 
 void Game::move_camera(Vector2D player_pos_new)
@@ -123,10 +156,16 @@ void Game::render()
 	{
 		c->draw();
 	}
+	for (auto& p : projectiles)
+	{
+		p->draw();
+	}
 	for (auto& p : players)
 	{
 		p->draw();
 	}
+	label.draw();
+
 	SDL_RenderPresent(renderer);
 }
 
