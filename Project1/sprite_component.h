@@ -30,9 +30,11 @@ public:
 
 		Animation idle = Animation(0, 2, 200);
 		Animation walk = Animation(1, 2, 200);
+		Animation attack = Animation(2, 2, 200);
 
 		animations_map.emplace("Idle", idle);
 		animations_map.emplace("Walk", walk);
+		animations_map.emplace("Attack", attack);
 
 		Play("Idle");
 		setTex(id);

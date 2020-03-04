@@ -139,6 +139,7 @@
     <ClCompile Include="vector_2d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ai_component.h" />
     <ClInclude Include="animation.h" />
     <ClInclude Include="asset_manager.h" />
     <ClInclude Include="collider_component.h" />
