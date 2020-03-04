@@ -1,7 +1,7 @@
 #pragma once
 #include "SDL.h"
 
-class ColliderComponent; //use this instead of an include
+class ColliderComponent; /* Used instead of an include */
 
 class Collision
 {

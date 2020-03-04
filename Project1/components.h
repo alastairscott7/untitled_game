@@ -7,3 +7,4 @@
 #include "tile_component.h"
 #include "projectile_component.h"
 #include "ui_label.h"
+#include "ai_component.h"

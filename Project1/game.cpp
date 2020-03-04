@@ -75,6 +75,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	enemy.addComponent<TransformComponent>(100, 224, 2);
 	enemy.addComponent<SpriteComponent>("enemy", true);
 	enemy.addComponent<ColliderComponent>("enemy");
+	enemy.addComponent<AIComponent>();
 	enemy.addGroup(groupEnemies);
 
 	SDL_Color white = { 255, 255, 255, 255 };
@@ -107,12 +108,46 @@ void Game::update()
 {
 	SDL_Rect player_col = player.getComponent<ColliderComponent>().collider;
 	Vector2D player_pos = player.getComponent<TransformComponent>().position;
+	Vector2D enemy_pos;
+	SDL_Rect enemy_col;
 	std::stringstream ss;
 
 	ss << "Player Position: " << player_pos;
 	label.getComponent<UILabel>().set_label_text(ss.str(), "arial");
 
 	move_camera(player_pos);
+
+	for (auto e : enemies) {
+		enemy_pos = e->getComponent<TransformComponent>().position;
+		enemy_col = e->getComponent<ColliderComponent>().collider;
+		if (enemy_pos.x > camera.x && enemy_pos.x < camera.x + camera.w &&
+			enemy_pos.y > camera.y && enemy_pos.y < camera.y + camera.h) {
+			if ((player_pos.x - enemy_pos.x) >= 0) {
+				e->getComponent<TransformComponent>().velocity.x = 1;
+				e->getComponent<SpriteComponent>().facing_left = false;
+			}
+			else {
+				e->getComponent<TransformComponent>().velocity.x = -1;
+				e->getComponent<SpriteComponent>().Play("Walk");
+				e->getComponent<SpriteComponent>().facing_left = true;
+			}
+			if ((player_pos.y - enemy_pos.y) >= 0) {
+				e->getComponent<TransformComponent>().velocity.y = 1;
+				e->getComponent<SpriteComponent>().Play("Walk");
+			}
+			else {
+				e->getComponent<TransformComponent>().velocity.y = -1;
+				e->getComponent<SpriteComponent>().Play("Walk");
+			}
+		}
+		else {
+			e->getComponent<TransformComponent>().velocity.x = 0;
+			e->getComponent<TransformComponent>().velocity.y = 0;
+		}
+		if (Collision::AABB(enemy_col, player_col)) {
+			e->getComponent<SpriteComponent>().Play("Attack");
+		}
+	}
 
 	manager.refresh();
 	manager.update();
