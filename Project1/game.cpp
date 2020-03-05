@@ -118,32 +118,9 @@ void Game::update()
 	move_camera(player_pos);
 
 	for (auto e : enemies) {
-		enemy_pos = e->getComponent<TransformComponent>().position;
 		enemy_col = e->getComponent<ColliderComponent>().collider;
-		if (enemy_pos.x > camera.x && enemy_pos.x < camera.x + camera.w &&
-			enemy_pos.y > camera.y && enemy_pos.y < camera.y + camera.h) {
-			if ((player_pos.x - enemy_pos.x) >= 0) {
-				e->getComponent<TransformComponent>().velocity.x = 1;
-				e->getComponent<SpriteComponent>().facing_left = false;
-			}
-			else {
-				e->getComponent<TransformComponent>().velocity.x = -1;
-				e->getComponent<SpriteComponent>().Play("Walk");
-				e->getComponent<SpriteComponent>().facing_left = true;
-			}
-			if ((player_pos.y - enemy_pos.y) >= 0) {
-				e->getComponent<TransformComponent>().velocity.y = 1;
-				e->getComponent<SpriteComponent>().Play("Walk");
-			}
-			else {
-				e->getComponent<TransformComponent>().velocity.y = -1;
-				e->getComponent<SpriteComponent>().Play("Walk");
-			}
-		}
-		else {
-			e->getComponent<TransformComponent>().velocity.x = 0;
-			e->getComponent<TransformComponent>().velocity.y = 0;
-		}
+
+		e->getComponent<AIComponent>().aggro_check(player_pos);
 		if (Collision::AABB(enemy_col, player_col)) {
 			e->getComponent<SpriteComponent>().Play("Attack");
 		}
@@ -155,6 +132,11 @@ void Game::update()
 	for (auto c : colliders) {
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 		if (Collision::AABB(cCol, player_col)) {
+			/* FIXME: Player's previous position still collides */
+			std::cout << "collider position x:" << cCol.x << std::endl;
+			std::cout << "collider position y:" << cCol.y << std::endl;
+			std::cout << "player col position x:" << player_col.x << std::endl;
+			std::cout << "player col position y:" << player_col.y << std::endl;
 			player.getComponent<TransformComponent>().position = player_pos;
 		}
 	}
