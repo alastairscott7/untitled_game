@@ -18,6 +18,7 @@ AssetManager* Game::assets = new AssetManager(&manager);
 auto& player = manager.addEntity();
 auto& enemy = manager.addEntity();
 auto& label = manager.addEntity();
+auto& axe = manager.addEntity();
 
 Game::Game()
 {}
@@ -61,6 +62,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->add_texture("player", "assets/hoodie.png");
 	assets->add_texture("enemy", "assets/enemy_full.png");
 	assets->add_texture("projectile", "assets/proj.png");
+	assets->add_texture("axe", "assets/axe.png");
 	assets->add_font("arial", "assets/arial.ttf", 16);
 
 	map = new Map();
@@ -78,6 +80,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	enemy.addComponent<AIComponent>();
 	enemy.addGroup(groupEnemies);
 
+	axe.addComponent<TransformComponent>(1300, 224, 2);
+	axe.addComponent<SpriteComponent>("axe", true);
+	axe.addComponent<ColliderComponent>("item");
+	axe.addComponent<ItemComponent>();
+	axe.addGroup(groupItems);
+
 	SDL_Color white = { 255, 255, 255, 255 };
 	label.addComponent<UILabel>(10, 10, "Test String", "arial", white);
 
@@ -90,6 +98,7 @@ auto& players(manager.getGroup(Game::groupPlayers));
 auto& enemies(manager.getGroup(Game::groupEnemies));
 auto& colliders(manager.getGroup(Game::groupColliders));
 auto& projectiles(manager.getGroup(Game::groupProjectiles));
+auto& items(manager.getGroup(Game::groupItems));
 
 void Game::handle_events()
 {
@@ -184,6 +193,10 @@ void Game::render()
 	for (auto& p : projectiles)
 	{
 		p->draw();
+	}
+	for (auto& i : items)
+	{
+		i->draw();
 	}
 	for (auto& p : players)
 	{

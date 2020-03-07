@@ -8,3 +8,4 @@
 #include "projectile_component.h"
 #include "ui_label.h"
 #include "ai_component.h"
+#include "item_component.h"
