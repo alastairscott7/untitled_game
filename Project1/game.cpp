@@ -117,8 +117,8 @@ void Game::update()
 {
 	SDL_Rect player_col = player.getComponent<ColliderComponent>().collider;
 	Vector2D player_pos = player.getComponent<TransformComponent>().position;
-	Vector2D enemy_pos;
 	SDL_Rect enemy_col;
+	SDL_Rect item_col;
 	std::stringstream ss;
 
 	ss << "Player Position: " << player_pos;
@@ -132,6 +132,20 @@ void Game::update()
 		e->getComponent<AIComponent>().aggro_check(player_pos);
 		if (Collision::AABB(enemy_col, player_col)) {
 			e->getComponent<SpriteComponent>().Play("Attack");
+		}
+	}
+
+	for (auto i : items) {
+		item_col = i->getComponent<ColliderComponent>().collider;
+
+		if (Collision::AABB(item_col, player_col)) {
+			std::cout << "Player collected item: " << i->getComponent<SpriteComponent>().sprite_id << std::endl;
+			std::cout << "item col x:" << item_col.x << std::endl;
+			std::cout << "item col y:" << item_col.y << std::endl;
+			std::cout << "item col w:" << item_col.w << std::endl;
+			std::cout << "item col h:" << item_col.h << std::endl;
+			i->destroy();
+			//add item to inventory
 		}
 	}
 

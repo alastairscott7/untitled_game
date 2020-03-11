@@ -9,3 +9,4 @@
 #include "ui_label.h"
 #include "ai_component.h"
 #include "item_component.h"
+#include "inventory_component.h"

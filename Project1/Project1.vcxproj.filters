@@ -101,6 +101,9 @@
     <ClInclude Include="item_component.h">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="inventory_component.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\coltex.png">

@@ -9,6 +9,7 @@ class KeyboardControl : public Component
 public:
 	TransformComponent* transform;
 	SpriteComponent* sprite;
+	SpriteComponent* item_sprite;
 
 	void init() override
 	{
@@ -18,6 +19,8 @@ public:
 
 	void update() override
 	{
+		item_sprite = Game::assets->get_texture(entity->getComponent<InventoryComponent>().equipped);
+
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)
 			{
@@ -39,6 +42,11 @@ public:
 				sprite->facing_left = false;
 				sprite->Play("Walk");
 				break;
+			case SDLK_DOWN:
+				if (!sprite->facing_left) {
+
+				}
+				sprite->Play("Attack");
 
 			default:
 				break;

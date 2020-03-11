@@ -12,6 +12,7 @@ class SpriteComponent : public Component
 public:
 
 	int anim_index = 0;
+	std::string sprite_id;
 
 	std::map<const char*, Animation> animations_map;
 
@@ -27,6 +28,7 @@ public:
 	SpriteComponent(std::string id, bool isAnimated)
 	{
 		animated = isAnimated;
+		sprite_id = id;
 
 		Animation idle = Animation(0, 2, 200);
 		Animation walk = Animation(1, 2, 200);
@@ -37,7 +39,7 @@ public:
 		animations_map.emplace("Attack", attack);
 
 		Play("Idle");
-		setTex(id);
+		setTex(sprite_id);
 	}
 
 	~SpriteComponent()
