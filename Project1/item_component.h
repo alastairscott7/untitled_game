@@ -16,7 +16,6 @@ public:
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
-
 	}
 
 private:

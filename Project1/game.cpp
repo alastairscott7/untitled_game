@@ -58,8 +58,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		std::cout << "Error: SDL_TTF" << std::endl;
 	}
 
-
-	assets->add_texture("player", "assets/hoodie.png");
+	assets->add_texture("player", "assets/player.png");
+	assets->add_texture("player_axe", "assets/player_axe.png");
 	assets->add_texture("enemy", "assets/enemy_full.png");
 	assets->add_texture("projectile", "assets/proj.png");
 	assets->add_texture("axe", "assets/axe.png");
@@ -71,7 +71,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<TransformComponent>(768, 224, 2);
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardControl>();
-	player.addComponent<ColliderComponent>("player");
+	player.addComponent<ColliderComponent>("player", player.getComponent<TransformComponent>().position.x,
+		player.getComponent<TransformComponent>().position.y,
+		player.getComponent<TransformComponent>().width * player.getComponent<TransformComponent>().scale,
+		player.getComponent<TransformComponent>().height * player.getComponent<TransformComponent>().scale);
+	player.addComponent<InventoryComponent>();
 	player.addGroup(groupPlayers);
 
 	enemy.addComponent<TransformComponent>(100, 224, 2);
@@ -144,8 +148,8 @@ void Game::update()
 			std::cout << "item col y:" << item_col.y << std::endl;
 			std::cout << "item col w:" << item_col.w << std::endl;
 			std::cout << "item col h:" << item_col.h << std::endl;
+			player.getComponent<InventoryComponent>().pickup_item(i->getComponent<SpriteComponent>().sprite_id);
 			i->destroy();
-			//add item to inventory
 		}
 	}
 
@@ -155,7 +159,7 @@ void Game::update()
 	for (auto c : colliders) {
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 		if (Collision::AABB(cCol, player_col)) {
-			/* FIXME: Player's previous position still collides */
+			/* FIXME: Player can't move along axis perpendicular to collision when hitting wall */
 			std::cout << "collider position x:" << cCol.x << std::endl;
 			std::cout << "collider position y:" << cCol.y << std::endl;
 			std::cout << "player col position x:" << player_col.x << std::endl;

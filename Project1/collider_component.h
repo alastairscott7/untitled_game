@@ -40,9 +40,6 @@ public:
 		tex = TextureManager::load_texture("assets/coltex.png");
 		srcR = { 0, 0, 32, 32 };
 		dstR = { collider.x, collider.y, collider.w, collider.h };
-
-		//Use grouping instead of this?
-		//Game::colliders.push_back(this); //why can i access this here?
 	}
 
 	void update() override
@@ -54,6 +51,9 @@ public:
 			collider.y = static_cast<int>(transform->position.y);
 			collider.w = transform->width * transform->scale;
 			collider.h = transform->height * transform->scale;
+			/* FIXME: dstR Width and height not getting initialized properly */
+			dstR.w = collider.w;
+			dstR.h = collider.h;
 		}
 			dstR.x = collider.x - Game::camera.x;
 			dstR.y = collider.y - Game::camera.y;

@@ -45,6 +45,4 @@ private:
 	int speed = 0;
 	int distance = 0;
 	Vector2D velocity;
-
-
 };

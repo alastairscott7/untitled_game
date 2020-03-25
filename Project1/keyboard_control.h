@@ -3,6 +3,7 @@
 #include "game.h"
 #include "ECS.h"
 #include "components.h"
+#include "inventory_component.h"
 
 class KeyboardControl : public Component
 {
@@ -19,8 +20,6 @@ public:
 
 	void update() override
 	{
-		item_sprite = Game::assets->get_texture(entity->getComponent<InventoryComponent>().equipped);
-
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)
 			{
@@ -43,11 +42,10 @@ public:
 				sprite->Play("Walk");
 				break;
 			case SDLK_DOWN:
-				if (!sprite->facing_left) {
-
+				if (!entity->getComponent<InventoryComponent>().equipped.empty()) {
+					sprite->Play("Attack");
 				}
-				sprite->Play("Attack");
-
+				break;
 			default:
 				break;
 			}
@@ -75,6 +73,9 @@ public:
 				if (transform->velocity.x > 0) {
 					transform->velocity.x = 0;
 				}
+				break;
+			case SDLK_DOWN:
+				sprite->Play("Idle");
 				break;
 
 			default:
