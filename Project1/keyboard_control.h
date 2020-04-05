@@ -20,6 +20,11 @@ public:
 
 	void update() override
 	{
+		bool down;
+		bool up;
+		bool right;
+		bool left;
+
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)
 			{

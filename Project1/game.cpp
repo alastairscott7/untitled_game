@@ -70,11 +70,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	player.addComponent<TransformComponent>(768, 224, 2);
 	player.addComponent<SpriteComponent>("player", true);
-	player.addComponent<KeyboardControl>();
 	player.addComponent<ColliderComponent>("player", player.getComponent<TransformComponent>().position.x,
 		player.getComponent<TransformComponent>().position.y,
 		player.getComponent<TransformComponent>().width * player.getComponent<TransformComponent>().scale,
 		player.getComponent<TransformComponent>().height * player.getComponent<TransformComponent>().scale);
+	player.addComponent<KeyboardControl>();
 	player.addComponent<InventoryComponent>();
 	player.addGroup(groupPlayers);
 
@@ -121,9 +121,15 @@ void Game::update()
 {
 	SDL_Rect player_col = player.getComponent<ColliderComponent>().collider;
 	Vector2D player_pos = player.getComponent<TransformComponent>().position;
+	Vector2D player_vel = player.getComponent<TransformComponent>().velocity;
+	int player_speed = player.getComponent<TransformComponent>().speed;
+	float player_future_x;
+	float player_future_y;
+	SDL_Rect player_future_col;
 	SDL_Rect enemy_col;
 	SDL_Rect item_col;
 	std::stringstream ss;
+
 
 	ss << "Player Position: " << player_pos;
 	label.getComponent<UILabel>().set_label_text(ss.str(), "arial");
@@ -146,27 +152,47 @@ void Game::update()
 			std::cout << "Player collected item: " << i->getComponent<SpriteComponent>().sprite_id << std::endl;
 			std::cout << "item col x:" << item_col.x << std::endl;
 			std::cout << "item col y:" << item_col.y << std::endl;
-			std::cout << "item col w:" << item_col.w << std::endl;
-			std::cout << "item col h:" << item_col.h << std::endl;
 			player.getComponent<InventoryComponent>().pickup_item(i->getComponent<SpriteComponent>().sprite_id);
 			i->destroy();
 		}
 	}
 
-	manager.refresh();
-	manager.update();
-
+	/* Stop impending tile collision from occuring -> Should item and projectile collisions be in here too? */
+	player_future_x = player_pos.x + player_vel.x * player_speed;
+	player_future_y = player_pos.y + player_vel.y * player_speed;
+	player_future_col = { static_cast<int>(player_future_x), static_cast<int>(player_future_y), player_col.w, player_col.h };
 	for (auto c : colliders) {
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-		if (Collision::AABB(cCol, player_col)) {
-			/* FIXME: Player can't move along axis perpendicular to collision when hitting wall */
-			std::cout << "collider position x:" << cCol.x << std::endl;
-			std::cout << "collider position y:" << cCol.y << std::endl;
-			std::cout << "player col position x:" << player_col.x << std::endl;
-			std::cout << "player col position y:" << player_col.y << std::endl;
-			player.getComponent<TransformComponent>().position = player_pos;
+		if (Collision::AABB(cCol, player_future_col)) {
+			if (player_vel.x > 0) {
+				if ((player_future_x + player_col.w > cCol.x) && (player_pos.y < cCol.y + 64) && (player_pos.y > cCol.y - 64)) {
+					player.getComponent<TransformComponent>().position.x = cCol.x - 64 - 1;
+					player.getComponent<TransformComponent>().velocity.x = 0;
+				}
+			}
+			else if (player_vel.x < 0) {
+				if ((player_future_x < cCol.x + cCol.w) && (player_pos.y < cCol.y + 64) && (player_pos.y > cCol.y - 64)) {
+					player.getComponent<TransformComponent>().position.x = cCol.x + 64 + 1;
+					player.getComponent<TransformComponent>().velocity.x = 0;
+				}
+			}
+			if (player_vel.y > 0) {
+				if ((player_future_y + player_col.h > cCol.y) && (player_pos.x < cCol.x + 64) && (player_pos.x > cCol.x - 64)) {
+					player.getComponent<TransformComponent>().position.y = cCol.y - 64 - 1;
+					player.getComponent<TransformComponent>().velocity.y = 0;
+				}
+			}
+			else if (player_vel.y < 0) {
+				if ((player_future_y < cCol.y + cCol.h) && (player_pos.x < cCol.x + 64) && (player_pos.x > cCol.x - 64)) {
+					player.getComponent<TransformComponent>().position.y = cCol.y + 64 + 1;
+					player.getComponent<TransformComponent>().velocity.y = 0;
+				}
+			}
 		}
 	}
+
+	manager.refresh();
+	manager.update();
 
 	for (auto& p : projectiles)
 	{
