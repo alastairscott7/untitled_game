@@ -1,5 +1,6 @@
 #include "collision.h"
 #include "collider_component.h"
+#include "transform_component.h"
 
 bool Collision::AABB(const SDL_Rect& rect_A, const SDL_Rect& rect_B)
 {

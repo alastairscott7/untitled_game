@@ -20,10 +20,7 @@ public:
 
 	void update() override
 	{
-		bool down;
-		bool up;
-		bool right;
-		bool left;
+		//const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)

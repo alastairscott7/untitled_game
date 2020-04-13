@@ -119,27 +119,25 @@ void Game::handle_events()
 
 void Game::update()
 {
-	SDL_Rect player_col = player.getComponent<ColliderComponent>().collider;
-	Vector2D player_pos = player.getComponent<TransformComponent>().position;
-	Vector2D player_vel = player.getComponent<TransformComponent>().velocity;
-	int player_speed = player.getComponent<TransformComponent>().speed;
-	float player_future_x;
-	float player_future_y;
+	TransformComponent transform_prev;
+	SDL_Rect player_col;
 	SDL_Rect player_future_col;
 	SDL_Rect enemy_col;
 	SDL_Rect item_col;
 	std::stringstream ss;
 
+	transform_prev = player.getComponent<TransformComponent>();
+	player_col = player.getComponent<ColliderComponent>().collider;
 
-	ss << "Player Position: " << player_pos;
+	move_camera(transform_prev.position);
+
+	ss << "Player Position: " << transform_prev.position;
 	label.getComponent<UILabel>().set_label_text(ss.str(), "arial");
-
-	move_camera(player_pos);
 
 	for (auto e : enemies) {
 		enemy_col = e->getComponent<ColliderComponent>().collider;
 
-		e->getComponent<AIComponent>().aggro_check(player_pos);
+		e->getComponent<AIComponent>().aggro_check(transform_prev.position);
 		if (Collision::AABB(enemy_col, player_col)) {
 			e->getComponent<SpriteComponent>().Play("Attack");
 		}
@@ -150,43 +148,39 @@ void Game::update()
 
 		if (Collision::AABB(item_col, player_col)) {
 			std::cout << "Player collected item: " << i->getComponent<SpriteComponent>().sprite_id << std::endl;
-			std::cout << "item col x:" << item_col.x << std::endl;
-			std::cout << "item col y:" << item_col.y << std::endl;
 			player.getComponent<InventoryComponent>().pickup_item(i->getComponent<SpriteComponent>().sprite_id);
 			i->destroy();
 		}
 	}
 
-	/* Stop impending tile collision from occuring -> Should item and projectile collisions be in here too? */
-	player_future_x = player_pos.x + player_vel.x * player_speed;
-	player_future_y = player_pos.y + player_vel.y * player_speed;
-	player_future_col = { static_cast<int>(player_future_x), static_cast<int>(player_future_y), player_col.w, player_col.h };
+	/* Where would the player be next? */
+	player_future_col = { static_cast<int>(transform_prev.position.x + transform_prev.velocity.x * transform_prev.speed),
+		                  static_cast<int>(transform_prev.position.y + transform_prev.velocity.y * transform_prev.speed), 
+		                  player_col.w, player_col.h };
+
+	/* Stop impending tile collisions from occuring */
 	for (auto c : colliders) {
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 		if (Collision::AABB(cCol, player_future_col)) {
-			if (player_vel.x > 0) {
-				if ((player_future_x + player_col.w > cCol.x) && (player_pos.y < cCol.y + 64) && (player_pos.y > cCol.y - 64)) {
-					player.getComponent<TransformComponent>().position.x = cCol.x - 64 - 1;
-					player.getComponent<TransformComponent>().velocity.x = 0;
-				}
+			if ((transform_prev.velocity.x > 0) && 
+				(transform_prev.position.y < cCol.y + 64) && (transform_prev.position.y > cCol.y - 64)) {
+				player.getComponent<TransformComponent>().position.x = cCol.x - 64;
+				player.getComponent<TransformComponent>().velocity.x = 0;
 			}
-			else if (player_vel.x < 0) {
-				if ((player_future_x < cCol.x + cCol.w) && (player_pos.y < cCol.y + 64) && (player_pos.y > cCol.y - 64)) {
-					player.getComponent<TransformComponent>().position.x = cCol.x + 64 + 1;
-					player.getComponent<TransformComponent>().velocity.x = 0;
-				}
+			else if ((transform_prev.velocity.x < 0) && 
+				(transform_prev.position.y < cCol.y + 64) && (transform_prev.position.y > cCol.y - 64)) {
+				player.getComponent<TransformComponent>().position.x = cCol.x + 64;
+				player.getComponent<TransformComponent>().velocity.x = 0;
 			}
-			if (player_vel.y > 0) {
-				if ((player_future_y + player_col.h > cCol.y) && (player_pos.x < cCol.x + 64) && (player_pos.x > cCol.x - 64)) {
-					player.getComponent<TransformComponent>().position.y = cCol.y - 64 - 1;
-					player.getComponent<TransformComponent>().velocity.y = 0;
-				}
+			if ((transform_prev.velocity.y > 0) && 
+				(transform_prev.position.x < cCol.x + 64) && (transform_prev.position.x > cCol.x - 64)) {
+				player.getComponent<TransformComponent>().position.y = cCol.y - 64;
+				player.getComponent<TransformComponent>().velocity.y = 0;
 			}
-			else if (player_vel.y < 0) {
-				if ((player_future_y < cCol.y + cCol.h) && (player_pos.x < cCol.x + 64) && (player_pos.x > cCol.x - 64)) {
-					player.getComponent<TransformComponent>().position.y = cCol.y + 64 + 1;
-					player.getComponent<TransformComponent>().velocity.y = 0;
-				}
+			else if ((transform_prev.velocity.y < 0) && 
+				(transform_prev.position.x < cCol.x + 64) && (transform_prev.position.x > cCol.x - 64)) {
+				player.getComponent<TransformComponent>().position.y = cCol.y + 64;
+				player.getComponent<TransformComponent>().velocity.y = 0;
 			}
 		}
 	}

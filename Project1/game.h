@@ -4,6 +4,7 @@
 #include "SDL_image.h"
 #include "vector_2d.h"
 #include "asset_manager.h"
+#include <bitset>
 #include <iostream>
 #include <vector>
 
