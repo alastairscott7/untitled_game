@@ -20,29 +20,34 @@ public:
 
 	void update() override
 	{
-		//const Uint8* keystate = SDL_GetKeyboardState(NULL);
+		const Uint8* keystates = SDL_GetKeyboardState(NULL);
+
+		if (keystates[SDL_SCANCODE_W])
+		{
+			transform->velocity.y = -1;
+			sprite->Play("Walk");
+		}
+		if (keystates[SDL_SCANCODE_A])
+		{
+			transform->velocity.x = -1;
+			sprite->facing_left = true;
+			sprite->Play("Walk");
+		}
+		if (keystates[SDL_SCANCODE_S])
+		{
+			transform->velocity.y = 1;
+			sprite->Play("Walk");
+		}
+		if (keystates[SDL_SCANCODE_D])
+		{
+			transform->velocity.x = 1;
+			sprite->facing_left = false;
+			sprite->Play("Walk");
+		}
 
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_w:
-				transform->velocity.y = -1;
-				sprite->Play("Walk");
-				break;
-			case SDLK_a:
-				transform->velocity.x = -1;
-				sprite->facing_left = true;
-				sprite->Play("Walk");
-				break;
-			case SDLK_s:
-				transform->velocity.y = 1;
-				sprite->Play("Walk");
-				break;
-			case SDLK_d:
-				transform->velocity.x = 1;
-				sprite->facing_left = false;
-				sprite->Play("Walk");
-				break;
 			case SDLK_DOWN:
 				if (!entity->getComponent<InventoryComponent>().equipped.empty()) {
 					sprite->Play("Attack");
