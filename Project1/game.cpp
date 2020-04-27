@@ -62,7 +62,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->add_texture("player_axe", "assets/player_axe.png");
 	assets->add_texture("enemy", "assets/enemy_full.png");
 	assets->add_texture("projectile", "assets/proj.png");
-	assets->add_texture("axe", "assets/axe.png");
+	assets->add_texture("axe", "assets/axe_swing.png");
 	assets->add_font("arial", "assets/arial.ttf", 16);
 
 	map = new Map();
@@ -87,7 +87,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	axe.addComponent<TransformComponent>(1300, 224, 2);
 	axe.addComponent<SpriteComponent>("axe", true);
 	axe.addComponent<ColliderComponent>("item");
-	axe.addComponent<ItemComponent>();
 	axe.addGroup(groupItems);
 
 	SDL_Color white = { 255, 255, 255, 255 };
@@ -103,6 +102,7 @@ auto& enemies(manager.getGroup(Game::groupEnemies));
 auto& colliders(manager.getGroup(Game::groupColliders));
 auto& projectiles(manager.getGroup(Game::groupProjectiles));
 auto& items(manager.getGroup(Game::groupItems));
+auto& weapons(manager.getGroup(Game::groupWeapons));
 
 void Game::handle_events()
 {
@@ -149,6 +149,7 @@ void Game::update()
 		if (Collision::AABB(item_col, player_col)) {
 			std::cout << "Player collected item: " << i->getComponent<SpriteComponent>().sprite_id << std::endl;
 			player.getComponent<InventoryComponent>().pickup_item(i->getComponent<SpriteComponent>().sprite_id);
+			assets->create_weapon(&player.getComponent<TransformComponent>(), &player.getComponent<SpriteComponent>(), "axe", true);
 			i->destroy();
 		}
 	}
@@ -191,9 +192,11 @@ void Game::update()
 	for (auto& p : projectiles)
 	{
 		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider)) {
-			/* get type of projectile, do different kinds of damage, etc */
-			std::cout << "Projectile hit player" << std::endl;
-			p->destroy();
+			if (p->getComponent<SpriteComponent>().sprite_id != "axe") {
+				/* get type of projectile, do different kinds of damage, etc */
+				std::cout << "Projectile hit player" << std::endl;
+				p->destroy();
+			}
 		}
 	}
 
@@ -235,6 +238,10 @@ void Game::render()
 	for (auto& i : items)
 	{
 		i->draw();
+	}
+	for (auto& w : weapons)
+	{
+		w->draw();
 	}
 	for (auto& p : players)
 	{

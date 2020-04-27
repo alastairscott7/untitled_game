@@ -37,7 +37,8 @@ public:
 		groupEnemies,
 		groupColliders,
 		groupProjectiles,
-		groupItems
+		groupItems,
+		groupWeapons
 	};
 
 private:

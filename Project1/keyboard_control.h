@@ -5,12 +5,20 @@
 #include "components.h"
 #include "inventory_component.h"
 
+//SDL_TimerCallback timer_callback(Uint32 interval, void* param)
+//{
+	//(bool)param = false;
+	//return 0;
+//}
+
 class KeyboardControl : public Component
 {
 public:
 	TransformComponent* transform;
 	SpriteComponent* sprite;
 	SpriteComponent* item_sprite;
+	bool action = false;
+	Uint16 ticks = 0;
 
 	void init() override
 	{
@@ -22,35 +30,40 @@ public:
 	{
 		const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
-		if (keystates[SDL_SCANCODE_W])
-		{
-			transform->velocity.y = -1;
-			sprite->Play("Walk");
-		}
-		if (keystates[SDL_SCANCODE_A])
-		{
-			transform->velocity.x = -1;
-			sprite->facing_left = true;
-			sprite->Play("Walk");
-		}
-		if (keystates[SDL_SCANCODE_S])
-		{
-			transform->velocity.y = 1;
-			sprite->Play("Walk");
-		}
-		if (keystates[SDL_SCANCODE_D])
-		{
-			transform->velocity.x = 1;
-			sprite->facing_left = false;
-			sprite->Play("Walk");
+		if (!action) {
+			if (keystates[SDL_SCANCODE_W])
+			{
+				transform->velocity.y = -1;
+				sprite->Play("Walk");
+			}
+			if (keystates[SDL_SCANCODE_A])
+			{
+				transform->velocity.x = -1;
+				sprite->facing_left = true;
+				sprite->Play("Walk");
+			}
+			if (keystates[SDL_SCANCODE_S])
+			{
+				transform->velocity.y = 1;
+				sprite->Play("Walk");
+			}
+			if (keystates[SDL_SCANCODE_D])
+			{
+				transform->velocity.x = 1;
+				sprite->facing_left = false;
+				sprite->Play("Walk");
+			}
 		}
 
 		if (Game::event.type == SDL_KEYDOWN) {
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_DOWN:
-				if (!entity->getComponent<InventoryComponent>().equipped.empty()) {
-					sprite->Play("Attack");
+				if (!entity->getComponent<InventoryComponent>().equipped.empty() && !action) {
+					action = true;
+					transform->attacking = true;
+					transform->velocity = Vector2D(0, 0);
+					//SDL_AddTimer(500, timer_callback, NULL);
 				}
 				break;
 			default:
@@ -82,7 +95,8 @@ public:
 				}
 				break;
 			case SDLK_DOWN:
-				sprite->Play("Idle");
+				action = false;
+				transform->attacking = false;
 				break;
 
 			default:

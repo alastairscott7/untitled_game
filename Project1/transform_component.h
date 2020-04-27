@@ -17,6 +17,8 @@ public:
 
 	int speed = 3;
 
+	bool attacking = false;
+
 	TransformComponent()
 	{
 		position.Zero();

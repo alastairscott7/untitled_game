@@ -7,6 +7,9 @@
 #include "ECS.h"
 #include "SDL_ttf.h"
 
+class TransformComponent;
+class SpriteComponent;
+
 class AssetManager
 {
 public:
@@ -15,7 +18,8 @@ public:
 
 	/* Game Objects */
 
-	void create_projectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id);
+	void create_projectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, bool flip, bool anim);
+	void create_weapon(TransformComponent* owner_trns, SpriteComponent* owner_spr, std::string id, bool anim);
 
 	/* Texture Management */
 	void add_texture(std::string id, const char* path);

@@ -98,10 +98,10 @@
     <ClInclude Include="ai_component.h">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="item_component.h">
+    <ClInclude Include="inventory_component.h">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="inventory_component.h">
+    <ClInclude Include="weapon_component.h">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
